@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SY MCA Major Project — FactoryMind AI (Second Presentation)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --navy: #0f172a;
+      --navy-light: #1e293b;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --accent-red: #ef4444;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0b0f19;
+      color: var(--text-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Fixed Top Control Bar */
+    .deck-controls {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1000;
+      color: #f1f5f9;
+      font-size: 13px;
+    }
+
+    .deck-controls .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-tkiet {
+      background: #0369a1;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .btn-ctrl {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #e2e8f0;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-ctrl:hover {
+      background: #0284c7;
+      border-color: #0284c7;
+      color: #fff;
+    }
+
+    /* Presentation Slide Stage */
+    .stage {
+      width: 100%;
+      max-width: 1200px;
+      margin: 70px auto 40px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .slide {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      display: none;
+      flex-direction: column;
+      padding: 40px 52px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slide Header & Footer */
+    .slide-header {
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .slide-category {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+    }
+
+    .slide-tkiet-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #334155;
+      overflow-y: auto;
+    }
+
+    .slide-footer {
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Common Layout Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      height: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .card-primary {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    ul.bullet-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    ul.bullet-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    ul.bullet-list li::before {
+      content: "▪";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-size: 18px;
+      line-height: 14px;
+      top: 2px;
+    }
+
+    /* Highlights & Badges */
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .pill-green { background: #dcfce7; color: #15803d; }
+    .pill-blue { background: #e0f2fe; color: #0369a1; }
+    .pill-amber { background: #fef3c7; color: #b45309; }
+    .pill-red { background: #fee2e2; color: #b91c1c; }
+
+    /* Tables */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    table.data-table th, table.data-table td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: #f1f5f9;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* Diagrams & Code Box */
+    .diagram-box {
+      background: #0f172a;
+      color: #38bdf8;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Slide Title Page Specific */
+    .slide-cover {
+      background: radial-gradient(circle at 80% 20%, #0369a1 0%, #0f172a 70%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 60px 70px;
+    }
+
+    .slide-cover .institution {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #93c5fd;
+      font-weight: 700;
+    }
+
+    .slide-cover h1 {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: #ffffff;
+      margin: 12px 0;
+    }
+
+    .slide-cover .subtitle {
+      font-size: 18px;
+      color: #e2e8f0;
+      font-weight: 400;
+      max-width: 800px;
+    }
+
+    .slide-cover .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 24px;
+      margin-top: 30px;
+    }
+
+    .meta-item h4 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    .meta-item p {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f8fafc;
+    }
+
+    /* Print / PDF Export Styling */
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .deck-controls, .nav-btn {
+        display: none !important;
+      }
+      .stage {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+      }
+      .slide {
+        display: flex !important;
+        page-break-after: always;
+        break-after: page;
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        aspect-ratio: 16 / 9;
+        width: 100%;
+        margin-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Controller Bar -->
+  <header class="deck-controls">
+    <div class="brand">
+      <span class="badge-tkiet">TKIET Warananagar</span>
+      <span>Department of Computer Applications • SY MCA Project Review-II</span>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <span id="slide-indicator" style="font-family: 'JetBrains Mono'; font-size: 12px; color: #94a3b8;">Slide 1 of 18</span>
+      <button class="btn-ctrl" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+      <button class="btn-ctrl" onclick="nextSlide()">Next <i class="fa-solid fa-chevron-right"></i></button>
+      <button class="btn-ctrl" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i> Fullscreen</button>
+      <button class="btn-ctrl" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> Print / PDF</button>
+      <a href="FactoryMind_AI_SY_MCA_Second_Presentation.pptx" download="FactoryMind_AI_SY_MCA_Second_Presentation.pptx" class="btn-ctrl" style="text-decoration: none; background: #0284c7; border-color: #0284c7; color: #ffffff;"><i class="fa-solid fa-download"></i> Download PPTX</a>
+    </div>
+  </header>
+
+  <!-- Presentation Stage -->
+  <main class="stage">
+
+    <!-- SLIDE 1: COVER PAGE -->
+    <section class="slide slide-cover active" id="slide-1">
+      <div>
+        <p class="institution">Tatyasaheb Kore Institute of Engineering & Technology (TKIET), Warananagar</p>
+        <p style="font-size: 12px; color: #cbd5e1; margin-top: 2px;">Department of Computer Applications • Academic Year 2026–2027</p>
+        <h1 style="margin-top: 24px;">FactoryMind AI</h1>
+        <p class="subtitle">An AI-Based Predictive Manufacturing and Machine Health Monitoring Platform</p>
+        <div style="margin-top: 14px;">
+          <span class="pill pill-blue">SY MCA Major Project</span>
+          <span class="pill pill-green" style="margin-left: 8px;">Preliminary Project Report — Second Presentation</span>
+        </div>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-item">
+          <h4>Presented By (SY MCA Group Members):</h4>
+          <p>1. [Student Name 1] — Roll No: [Roll 1]</p>
+          <p>2. [Student Name 2] — Roll No: [Roll 2]</p>
+          <p>3. [Student Name 3] — Roll No: [Roll 3]</p>
+        </div>
+        <div class="meta-item">
+          <h4>Under the Guidance of:</h4>
+          <p>[Name of Project Guide]</p>
+          <p style="font-size: 12px; color: #94a3b8; font-weight: normal; margin-top: 2px;">Assistant Professor, Department of Computer Applications</p>
+          <p style="font-size: 12px; color: #94a3b8; font-weight: normal;">TKIET, Warananagar</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: ABSTRACT -->
+    <section class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Executive Overview</p>
+          <h2 class="slide-title">Abstract</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card card-primary">
+            <h3 class="card-title"><i class="fa-solid fa-bullseye text-sky-600"></i> Project Essence</h3>
+            <p style="margin-bottom: 12px;"><strong>FactoryMind AI</strong> is an end-to-end cyber-physical predictive maintenance platform integrating <strong>Industrial IoT edge telemetry, Machine Learning, and Explainable AI (XAI)</strong> to shift manufacturing from reactive repairs to predictive intervention.</p>
+            <p>The platform monitors multi-sensor parameters (vibration RMS, temperature, current draw, and spindle RPM) across factory floor machines, detects subtle anomalies before breakdowns occur, and calculates accurate <strong>Remaining Useful Life (RUL)</strong>.</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-list-check text-emerald-600"></i> Core Pillars</h3>
+            <ul class="bullet-list">
+              <li><strong>Problem Addressed:</strong> Unplanned machine breakdowns causing huge financial loss ($260K/hour average industrial downtime).</li>
+              <li><strong>Hybrid Dual Architecture:</strong> High-throughput <strong>Java 21 Edge Gateway</strong> + High-precision <strong>Python 3.12 AI Engine</strong>.</li>
+              <li><strong>Interactive Visual Twin:</strong> Real-time <strong>3D WebGL Digital Twin</strong> with hot-spot fatigue inspection and live <strong>FFT harmonic spectrogram</strong>.</li>
+              <li><strong>Expected Outcome:</strong> 30%+ reduction in unexpected downtime, automated work orders, and compliance with ISO 13379-1 standards.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 2 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: CHAPTER 1 - INTRODUCTION -->
+    <section class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 1</p>
+          <h2 class="slide-title">Introduction & Problem Statement</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <h3 style="font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 8px;">1.1 Background & Context</h3>
+            <p style="font-size: 13.5px; margin-bottom: 12px;">Modern Industry 4.0 plants house complex machines (CNC mills, turning lathes, induction motors, and hydraulic pumps). Equipment failures halt entire production lines, causing catastrophic delays and safety hazards.</p>
+            
+            <h3 style="font-size: 15px; font-weight: 700; color: var(--accent-red); margin-bottom: 8px;">1.2 The Problem Statement</h3>
+            <div class="card" style="border-left: 4px solid var(--accent-red);">
+              <p style="font-size: 13px;"><em>"Traditional manufacturing relies either on reactive breakdown maintenance or rigid schedule-based overhaul. Neither approach provides real-time visibility into machine health, leading to either premature part replacement or sudden catastrophic breakdowns."</em></p>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 8px;">1.3 Need & Industrial Significance</h3>
+            <ul class="bullet-list">
+              <li><strong>Eliminate Unplanned Outages:</strong> Continuous telemetry analysis detects micro-faults (e.g. bearing spalling, phase imbalance) 40–80 hours prior to failure.</li>
+              <li><strong>Explainable Decisions:</strong> Technicians receive transparent root-cause attributions (SHAP factors) instead of black-box alarms.</li>
+              <li><strong>Target Users & Beneficiaries:</strong>
+                <br>• <strong>Plant Operations Managers:</strong> Fleet KPIs, MTBF/MTTR metrics, shift reports.
+                <br>• <strong>Reliability Engineers:</strong> 3D digital twin inspection & vibration harmonics.
+                <br>• <strong>Floor Technicians:</strong> Instant work-order tickets & AI copilot advice.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 3 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: CHAPTER 1 - OBJECTIVES & SCOPE -->
+    <section class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 1 (Continued)</p>
+          <h2 class="slide-title">Project Objectives & Scope</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card card-primary">
+            <h3 class="card-title"><i class="fa-solid fa-crosshairs text-sky-600"></i> Main Objectives</h3>
+            <ul class="bullet-list">
+              <li><strong>Real-Time IIoT Ingestion:</strong> Continuous acquisition of Temperature, Vibration RMS, Current, and RPM at 2.5s cadence.</li>
+              <li><strong>AI Anomaly Detection:</strong> Multidimensional distance scoring to flag abnormal machine behavior with &lt;5% false alarm rate.</li>
+              <li><strong>Multi-Class Fault Diagnosis:</strong> Classify root issues (Bearing Degradation, Thermal Overload, Electrical Phase Imbalance).</li>
+              <li><strong>Prognostic RUL Estimation:</strong> Predict Remaining Useful Life in operating hours to enable planned turnaround.</li>
+              <li><strong>Interactive 3D Digital Twin:</strong> GPU-accelerated WebGL machine model with hot-spot temperature & vibration inspection.</li>
+              <li><strong>Automated Work Orders:</strong> Closed-loop dispatching of maintenance tickets with priority levels and cost estimation.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-arrows-split-up-and-left text-indigo-600"></i> Project Scope</h3>
+            <div style="margin-bottom: 12px;">
+              <p style="font-weight: 700; color: #0284c7; font-size: 13px;">IN SCOPE (Delivered in Project):</p>
+              <p style="font-size: 12.5px;">• 6 industrial asset classes across 5 factory bays (CNC, Lathe, Motor, Pump, Compressor, Robot).<br>• Hybrid Java Edge Gateway + Python FastAPI server.<br>• Browser-based 3D Digital Twin, FFT Spectrogram, and AI Copilot.<br>• ISO 13379-1 Condition Monitoring Shift Report export.</p>
+            </div>
+            <div>
+              <p style="font-weight: 700; color: #b45309; font-size: 13px;">OUT OF SCOPE / FUTURE EXPANSION:</p>
+              <p style="font-size: 12.5px;">• Direct automated SCADA actuator shut-off (safety limits override requires on-site physical interlocks).<br>• Hardware CNC controller firmware flashing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 4 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: CHAPTER 2 - LITERATURE SURVEY -->
+    <section class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 2</p>
+          <h2 class="slide-title">Literature Survey & Existing Systems</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 20%;">Existing System / Paper</th>
+              <th style="width: 25%;">Key Features</th>
+              <th style="width: 25%;">Identified Limitations</th>
+              <th style="width: 30%;">How FactoryMind AI Solves It</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>NIST Smart Manufacturing PHM Framework (2022)</strong></td>
+              <td>Theoretical guidelines for diagnostics and prognostics using vibration time-series.</td>
+              <td>Lacks integrated software implementation and explainable AI transparency for operators.</td>
+              <td>Implements live SHAP tree attribution decomposed into human-readable percentage risk factors.</td>
+            </tr>
+            <tr>
+              <td><strong>Traditional CMMS (SAP PM / IBM Maximo)</strong></td>
+              <td>Enterprise work order ticketing, maintenance inventory, and manual scheduling.</td>
+              <td>Reactive; relies on manual inspection logs rather than real-time machine telemetry streams.</td>
+              <td>Autonomous closed-loop ticketing: AI directly triggers prioritized work orders upon threshold breach.</td>
+            </tr>
+            <tr>
+              <td><strong>Legacy SCADA Dashboards (Siemens WinCC / Wonderware)</strong></td>
+              <td>Static 2D supervisory control dials and raw threshold high/low alarms.</td>
+              <td>High false-alarm fatigue; no predictive RUL; lacks interactive 3D component localization.</td>
+              <td>Provides 3D WebGL Digital Twin with harmonic FFT spectrogram & predictive RUL estimation.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="card card-primary" style="margin-top: 14px; padding: 10px 14px;">
+          <p style="font-size: 12.5px;"><strong>Identified Research Gap:</strong> Industrial solutions are either pure ML research lacking end-to-end operational software, or enterprise CMMS tools devoid of real-time prognostics and 3D visual twins. FactoryMind AI bridges this gap.</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 5 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: CHAPTER 3 - PROPOSED SYSTEM & REQUIREMENTS -->
+    <section class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 3</p>
+          <h2 class="slide-title">Proposed System & Requirements Analysis</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <h3 class="card-title"><i class="fa-solid fa-cogs text-sky-600"></i> Functional Requirements (FR)</h3>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>FR1 (Ingestion):</strong> Receive JSON telemetry packets over HTTP/MQTT at 2.5s intervals.</li>
+              <li><strong>FR2 (Prognostics):</strong> Calculate Health Index (0–100%) and classify failure modes.</li>
+              <li><strong>FR3 (XAI Decomposition):</strong> Generate relative feature weights (SHAP values).</li>
+              <li><strong>FR4 (Alerts & Tickets):</strong> Automatically dispatch work orders with priority flags.</li>
+              <li><strong>FR5 (Digital Twin):</strong> Render 3D spindle model with clickable sensor inspection.</li>
+              <li><strong>FR6 (AI Copilot):</strong> Natural language query engine over live database state.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="card-title"><i class="fa-solid fa-shield-halved text-emerald-600"></i> Non-Functional Requirements (NFR)</h3>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Latency:</strong> Inference latency &lt; 20ms per machine telemetry packet.</li>
+              <li><strong>Availability:</strong> Continuous background polling with 99.5% uptime.</li>
+              <li><strong>Modularity:</strong> Decoupled Java Gateway, Python Backend, and Web Client.</li>
+              <li><strong>Security:</strong> Role-Based Access Control (Admin, Engineer, Manager) with JWT tokens.</li>
+              <li><strong>Compatibility:</strong> Standards-compliant with ISO 13379-1 Condition Monitoring.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 14px;">
+          <div class="card" style="padding: 10px 14px;">
+            <p style="font-size: 12px;"><strong>Hardware Specs:</strong> Intel i5/i7 or AMD Ryzen, 8GB+ RAM, 500MB storage, optional physical ESP32 + MPU6050 vibration sensor rig.</p>
+          </div>
+          <div class="card" style="padding: 10px 14px;">
+            <p style="font-size: 12px;"><strong>Software Stack:</strong> Python 3.12, Java 21 OpenJDK, FastAPI, SQLAlchemy, SQLite/PostgreSQL, Three.js WebGL, HTML5 Canvas.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 6 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: CHAPTER 4 - SYSTEM ARCHITECTURE -->
+    <section class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 4</p>
+          <h2 class="slide-title">System Architecture & Pipeline</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="diagram-box">
+ ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │                              FACTORY FLOOR ASSETS (BAYS 1–5)                           │
+ │   CNC Lathe Spindle  •  5-Axis Milling  •  Induction Motor  •  Hydraulic Pump  •  Robot │
+ └───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                             │ [Multi-Sensor: Temp, Vibration, Current, RPM]
+                                             ▼
+ ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │                     JAVA INDUSTRIAL IIoT EDGE GATEWAY (Java 21)                        │
+ │    • Concurrent PLC Polling ThreadPool (2.5s)     • In-Memory Buffer Validation        │
+ │    • Non-blocking java.net.http Frame Dispatcher  • Fault Injection Scenario Engine    │
+ └───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                             │ HTTP POST /api/v1/telemetry/ingest
+                                             ▼
+ ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │                    PYTHON FASTAPI PREDICTIVE AI ENGINE (Python 3.12)                   │
+ │  ┌─────────────────────────────────┐       ┌────────────────────────────────────────┐ │
+ │  │      DATA PERSISTENCE LAYER     │       │        AI / ML PROGNOSTIC ENGINE       │ │
+ │  │  • SQLAlchemy 2.0 ORM Engine    │ ◄───► │  1. Anomaly Distance Vector Scoring    │ │
+ │  │  • Time-Series Telemetry DB     │       │  2. Multi-Class Diagnostic Classifier  │ │
+ │  │  • Work Orders & Alert History  │       │  3. Explainable AI (SHAP Attributions) │ │
+ │  └─────────────────────────────────┘       │  4. Remaining Useful Life (RUL) Regress│ │
+ │                                            └────────────────────────────────────────┘ │
+ └───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                             │ JSON REST APIs & WebSockets
+                                             ▼
+ ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │                       3D CYBER-INDUSTRIAL WEB CONSOLE & TWIN                           │
+ │   Three.js 3D WebGL Hologram  •  Live FFT Spectrogram  •  Web Audio Synthesizer SFX    │
+ │   2.5D Conveyor Floor Plan    •  Conversational AI Copilot  •  ISO Shift PDF Export    │
+ └────────────────────────────────────────────────────────────────────────────────────────┘</div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 7 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: CHAPTER 4 - USE CASE DIAGRAM (MANDATORY) -->
+    <section class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 4 (Design)</p>
+          <h2 class="slide-title">Use Case Diagram (Mandatory Guideline)</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="diagram-box" style="font-size: 11px;">
+   +-------------------------------------------------------------+
+   |                  FactoryMind AI System                      |
+   |                                                             |
+   |  [Stream Live Telemetry] <----------- ( Java Edge Gateway ) |
+   |           ^                                                 |
+   |           | <<includes>>                                    |
+   |  ( Run Anomaly & RUL )                                      |
+   |           ^                                                 |
+   |           | <<triggers>>                                    |
+   |  ( Dispatch Work Order ) <---------- ( Maintenance Tech )  |
+   |                                                             |
+   |  ( View 3D Digital Twin ) <--------- ( Reliability Eng )   |
+   |  ( Inspect FFT Harmonics ) <-------- ( Reliability Eng )   |
+   |  ( Inject Fault Scenario ) <-------- ( Reliability Eng )   |
+   |                                                             |
+   |  ( View Fleet KPI Dashboard ) <----- ( Plant Manager )      |
+   |  ( Generate Shift Report ) <-------- ( Plant Manager )      |
+   |  ( Query AI Plant Copilot ) <------- ( Plant Manager/Eng )  |
+   |                                                             |
+   |  ( Manage Users & Machines ) <------ ( Administrator )      |
+   +-------------------------------------------------------------+</div>
+          <div>
+            <h3 class="card-title"><i class="fa-solid fa-users text-sky-600"></i> Primary System Actors</h3>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Java Edge Gateway (System Actor):</strong> Continuously streams sensor data packets from PLC nodes and handles connection retries.</li>
+              <li><strong>Reliability Engineer:</strong> Inspects localized 3D bearing hotspots, analyzes FFT vibration harmonics (1X, 2X, BPFO), and tests system resilience using fault injection.</li>
+              <li><strong>Plant Operations Manager:</strong> Monitors overall factory health score, reviews downtime avoided ROI, and exports ISO 13379-1 shift handover reports.</li>
+              <li><strong>Maintenance Technician:</strong> Receives autonomous work order tickets, reviews AI diagnostic recommendations, and closes resolved issues.</li>
+              <li><strong>Administrator:</strong> Configures machine metadata, baseline thresholds, and user access roles.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 8 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: CHAPTER 4 - DATABASE DESIGN (ER DIAGRAM) -->
+    <section class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 4 (Design)</p>
+          <h2 class="slide-title">Database Design & Entity Relationships</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="diagram-box" style="font-size: 11px;">
+   +-------------------+          +-------------------+
+   |      USERS        |          |     MACHINES      |
+   +-------------------+          +-------------------+
+   | PK id             |          | PK id             |
+   |    full_name      |          |    machine_code   |
+   |    email          |          |    name, type     |
+   |    password_hash  |          |    status         |
+   |    role           |          |    baseline_vib   |
+   +---------+---------+          |    baseline_temp  |
+             |                    +----+---------+----+
+             | 1:N                     | 1:N     | 1:N
+             |                         |         |
+             v                         v         v
+   +-------------------+      +--------+--+   +--+----------------+
+   |   WORK_ORDERS     |      | READINGS  |   | ML_PREDICTIONS    |
+   +-------------------+      +-----------+   +-------------------+
+   | PK id             |      | PK id     |   | PK id             |
+   | FK machine_id     |      | FK m_id   |   | FK machine_id     |
+   | FK technician_id  |      |    temp   |   |    health_score   |
+   |    work_code      |      |    vib_rms|   |    failure_prob   |
+   |    priority       |      |    current|   |    failure_type   |
+   |    status         |      |    rpm    |   |    rul_hours      |
+   +-------------------+      +-----------+   |    shap_factors   |
+                                              +-------------------+</div>
+          <div>
+            <h3 class="card-title"><i class="fa-solid fa-database text-sky-600"></i> Relational Entities & Integrity</h3>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>`machines`:</strong> Central asset registry storing baseline envelopes (temperature, vibration, current, RPM, operating hours).</li>
+              <li><strong>`sensor_readings`:</strong> High-frequency time-series table logging dynamic telemetry with millisecond timestamps.</li>
+              <li><strong>`ml_predictions`:</strong> Historical inference results tracking health index (0–100%), predicted fault class, RUL in hours, and JSON-encoded SHAP attributions.</li>
+              <li><strong>`alerts`:</strong> Automated anomaly events linked to machines with severity levels (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`).</li>
+              <li><strong>`maintenance_records`:</strong> Work order tickets dispatched automatically or manually to reliability technicians.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 9 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: CHAPTER 5 - MODULES & WORK ALLOCATION -->
+    <section class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 5</p>
+          <h2 class="slide-title">System Modules & Group Work Allocation</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Module Name</th>
+              <th style="width: 45%;">Functional Responsibility</th>
+              <th style="width: 30%;">Allocated Member</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>M1: IIoT Edge Gateway & Simulator</strong></td>
+              <td>Java 21 multithreaded PLC polling daemon, hardware framing, and HTTP transmission buffer.</td>
+              <td><strong>[Student Name 1]</strong></td>
+            </tr>
+            <tr>
+              <td><strong>M2: AI/ML Diagnostic Engine</strong></td>
+              <td>Anomaly distance scoring, failure classification, SHAP vector decomposition, and RUL regression.</td>
+              <td><strong>[Student Name 2]</strong></td>
+            </tr>
+            <tr>
+              <td><strong>M3: FastAPI Backend & Database</strong></td>
+              <td>RESTful API routing, SQLAlchemy ORM schema, alert dispatching, and work order tracking.</td>
+              <td><strong>[Student Name 1 & 2]</strong></td>
+            </tr>
+            <tr>
+              <td><strong>M4: 3D Digital Twin & Audio SFX</strong></td>
+              <td>Three.js WebGL procedural machine rendering, hotspot orbit controls, and Web Audio API synthesizer.</td>
+              <td><strong>[Student Name 3]</strong></td>
+            </tr>
+            <tr>
+              <td><strong>M5: Executive UI & AI Copilot</strong></td>
+              <td>2.5D factory floor map, live FFT spectrogram, natural language Copilot chat, and ISO shift report.</td>
+              <td><strong>[Student Name 3]</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="card card-primary" style="margin-top: 14px; padding: 10px 14px;">
+          <p style="font-size: 12.5px;"><strong>Collaboration Model:</strong> Modular microservice-style boundaries ensure each member works on decoupled components (Java Edge Gateway, Python Core AI, and WebGL Frontend) with unified REST API contracts.</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 10 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: CHAPTER 5 - TECHNOLOGY STACK & JUSTIFICATION -->
+    <section class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 5 (Technology)</p>
+          <h2 class="slide-title">Technology Stack & Technical Justification</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-brands fa-python text-sky-600"></i> Backend & AI</h3>
+            <p style="font-size: 13px; font-weight: 700; color: #0284c7;">Python 3.12 + FastAPI</p>
+            <p style="font-size: 12px; margin-top: 6px;">• <strong>Why FastAPI:</strong> Asynchronous high-throughput ASGI framework; 300% faster than Flask; automated OpenAPI/Swagger documentation.<br>• <strong>ML Engine:</strong> NumPy and scikit-learn algorithmic pipelines for zero-latency inference.</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title"><i class="fa-brands fa-java text-rose-600"></i> Edge Ingestion</h3>
+            <p style="font-size: 13px; font-weight: 700; color: #e11d48;">Java 21 OpenJDK</p>
+            <p style="font-size: 12px; margin-top: 6px;">• <strong>Why Java:</strong> Industrial standard for PLC gateways (Siemens MindSphere / OPC-UA). High-concurrency `ScheduledExecutorService` and deterministic garbage collection prevent telemetry dropouts.</p>
+          </div>
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-cube text-emerald-600"></i> Digital Twin Frontend</h3>
+            <p style="font-size: 13px; font-weight: 700; color: #059669;">Three.js + Tailwind CSS</p>
+            <p style="font-size: 12px; margin-top: 6px;">• <strong>Why Three.js:</strong> Client-side GPU-accelerated WebGL rendering runs on factory HMIs without installing heavy 3D software.<br>• <strong>Web Audio API:</strong> Native synthesized sound effects without external audio files.</p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 14px;">
+          <div class="card" style="padding: 10px 14px;">
+            <p style="font-size: 12px;"><strong>Database:</strong> SQLite 3 (Development & standalone demo portability) / PostgreSQL 16 (Enterprise scale via SQLAlchemy connection string swap).</p>
+          </div>
+          <div class="card" style="padding: 10px 14px;">
+            <p style="font-size: 12px;"><strong>Tools & Deployment:</strong> Visual Studio Code, Git/GitHub, Cloudflare Quick Tunnels (instant free HTTPS testing domain), Render.com.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 11 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: CHAPTER 6 - IMPLEMENTATION PROGRESS -->
+    <section class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 6</p>
+          <h2 class="slide-title">Current Implementation Progress (Status: Review-II)</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <h3 class="card-title"><i class="fa-solid fa-circle-check text-emerald-600"></i> Completed Work (Demonstrated Today)</h3>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Backend Architecture:</strong> 100% complete FastAPI server with 8 modular routers (`/machines`, `/telemetry`, `/predictions`, `/alerts`, etc.).</li>
+              <li><strong>Java Edge Gateway:</strong> Pure Java 21 daemon successfully streaming telemetry across 6 machine profiles.</li>
+              <li><strong>Predictive ML Engine:</strong> Operational anomaly scoring, SHAP impact breakdown, and RUL regressor.</li>
+              <li><strong>Web Digital Twin:</strong> 3D WebGL spindle inspection, audio synthesizer, and 60 FPS FFT harmonic spectrogram.</li>
+              <li><strong>Security Gateway:</strong> Dedicated `/login` portal with RFID card swipe simulation and demo profiles.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="card-title"><i class="fa-solid fa-spinner text-amber-500"></i> Work In Progress / Pending</h3>
+            <ul class="bullet-list" style="font-size: 13px;">
+              <li><strong>Physical Sensor Prototype:</strong> Interfacing physical ESP32 microcontroller with MPU6050 accelerometer for live physical vibration feed.</li>
+              <li><strong>Flutter Mobile App:</strong> Compiling cross-platform Android mobile dashboard for floor technicians.</li>
+              <li><strong>Model Benchmarking:</strong> Comparative evaluation against benchmark NASA C-MAPSS turbofan degradation dataset.</li>
+              <li><strong>Cloud Multi-Tenant Hosting:</strong> Production deployment on cloud VM with PostgreSQL persistence.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid-4" style="margin-top: 14px;">
+          <div class="card card-primary" style="text-align: center; padding: 10px;">
+            <span style="font-size: 20px; font-weight: 800; color: #0284c7;">100%</span>
+            <p style="font-size: 11px; color: var(--text-muted);">API Backend</p>
+          </div>
+          <div class="card card-primary" style="text-align: center; padding: 10px;">
+            <span style="font-size: 20px; font-weight: 800; color: #0284c7;">100%</span>
+            <p style="font-size: 11px; color: var(--text-muted);">Java Gateway</p>
+          </div>
+          <div class="card card-primary" style="text-align: center; padding: 10px;">
+            <span style="font-size: 20px; font-weight: 800; color: #0284c7;">90%</span>
+            <p style="font-size: 11px; color: var(--text-muted);">3D Web Console</p>
+          </div>
+          <div class="card card-primary" style="text-align: center; padding: 10px;">
+            <span style="font-size: 20px; font-weight: 800; color: #0284c7;">75%</span>
+            <p style="font-size: 11px; color: var(--text-muted);">Overall Project</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 12 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 13: CHAPTER 6 - UI PROTOTYPE & SCREENSHOTS (1) -->
+    <section class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 6 (Screenshots)</p>
+          <h2 class="slide-title">System UI: Login Gateway & Executive Dashboard</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-lock text-sky-600"></i> Security Login Portal (`/login`)</h3>
+            <div style="background: #020617; border-radius: 6px; padding: 14px; color: #94a3b8; font-size: 12px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #1e293b; padding-bottom: 6px; margin-bottom: 6px;">
+                <span style="color: #38bdf8; font-weight: 700;">FACTORYMIND SECURITY GATEWAY</span>
+                <span class="pill pill-green">ISO 13379-1</span>
+              </div>
+              <p>• 1-Click Role Presets (Engineer, Manager, Admin)</p>
+              <p>• RFID Card Tap Simulation for instant touchless sign-in</p>
+              <p>• Passcode visibility toggle and JWT token generation</p>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted);">Implemented and accessible at: <code>http://127.0.0.1:8000/login</code></p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-gauge-high text-emerald-600"></i> Executive Plant Dashboard (`/dashboard`)</h3>
+            <div style="background: #020617; border-radius: 6px; padding: 14px; color: #94a3b8; font-size: 12px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #1e293b; padding-bottom: 6px; margin-bottom: 6px;">
+                <span style="color: #38bdf8; font-weight: 700;">LIVE PLANT TELEMETRY OVERVIEW</span>
+                <span style="color: #34d399;">82.4% OPERATIONAL</span>
+              </div>
+              <p>• Fleet condition breakdown: 4 Healthy | 1 Warning | 1 Critical</p>
+              <p>• Urgent Mechanical Attention Ticker (Spindle bearing spike)</p>
+              <p>• Top SHAP Risk Attribution: Vibration (+44%) & Temp (+28%)</p>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted);">Implemented and accessible at: <code>http://127.0.0.1:8000/dashboard</code></p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 13 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 14: CHAPTER 6 - UI PROTOTYPE (DIGITAL TWIN & 3D) -->
+    <section class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 6 (Screenshots)</p>
+          <h2 class="slide-title">Interactive 3D WebGL Twin & FFT Spectrogram</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-cube text-sky-600"></i> 3D Spindle WebGL Hologram Viewport</h3>
+            <div style="background: #020617; border-radius: 6px; padding: 14px; color: #38bdf8; font-size: 12px; font-family: 'JetBrains Mono'; margin-bottom: 8px;">
+              [ 3D WebGL Hologram Active • Three.js 60 FPS ]<br><br>
+              • Spindle Body: Metallic Brushed Steel Lathe Headstock<br>
+              • Rotating Tool Collet & End-Mill Assembly<br>
+              • Hotspot 1: 📍 Spindle Bearing (Crimson Pulsing Glow)<br>
+              • Hotspot 2: 📍 Thermal Stator Jacket (Amber Glow)<br>
+              • Hotspot 3: 📍 Inverter Drive (Cyan Glow)<br>
+              • Controls: Drag mouse to rotate • Scroll to zoom
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted);">Provides mechanical technicians intuitive spatial visualization of degrading components.</p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-wave-square text-rose-600"></i> Live FFT Harmonic Vibration Spectrogram</h3>
+            <div style="background: #020617; border-radius: 6px; padding: 14px; color: #f43f5e; font-size: 12px; font-family: 'JetBrains Mono'; margin-bottom: 8px;">
+              [ Real-Time 60 FPS Canvas Harmonic Bars ]<br><br>
+              • 1X (24 Hz) : Fundamental Running Speed (Nominal)<br>
+              • 2X (48 Hz) : Shaft Misalignment Harmonic<br>
+              • 3X (72 Hz) : Mechanical Looseness Harmonic<br>
+              • BPFO (184 Hz): Ball Pass Outer Race Bearing Defect<br>
+              • Audio: Web Audio API Dual-Tone Warning Siren on Critical
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted);">Matches ISO 13379-1 standard for frequency-domain vibration diagnosis.</p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 14 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 15: CHAPTER 6 - DATASET & AI/ML DETAILS -->
+    <section class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 6 (AI / ML)</p>
+          <h2 class="slide-title">Dataset Characteristics & ML Prognostic Algorithms</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-table text-sky-600"></i> Telemetry Dataset Description</h3>
+            <ul class="bullet-list" style="font-size: 12.5px;">
+              <li><strong>Source & Calibration:</strong> Synthetic degradation models calibrated against benchmark <strong>NASA C-MAPSS</strong> and <strong>IMS Bearing</strong> run-to-failure datasets.</li>
+              <li><strong>Sampling Frequency:</strong> 2.5 seconds per packet across 6 machine classes.</li>
+              <li><strong>Feature Vector:</strong>
+                <br>• Temperature (°C) — Ambient baseline 65°C, critical &gt; 85°C.
+                <br>• Vibration RMS (g) — Nominal 0.35g, fatigue threshold 0.8g+.
+                <br>• Current Draw (A) & Spindle RPM (Speed variation).
+                <br>• Cumulative Operating Hours (duty cycle aging coefficient).
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-brain text-indigo-600"></i> AI / ML Prognostic Pipeline</h3>
+            <ul class="bullet-list" style="font-size: 12.5px;">
+              <li><strong>Anomaly Scoring:</strong> Weighted normalized Euclidean distance metric from baseline parameters ($w_{vib}=2.2$, $w_{temp}=1.4$).</li>
+              <li><strong>Calibrated Probability:</strong> Logistic Sigmoid transformation yielding continuous Failure Probability $P(fail) \in [0.01, 0.99]$.</li>
+              <li><strong>Health Score Index:</strong> Normalized $0–100\%$ operational index.</li>
+              <li><strong>RUL Estimator:</strong> Multi-stage degradation curve predicting remaining hours before functional failure (e.g., 42 hours for CNC-002).</li>
+              <li><strong>Explainable AI (SHAP):</strong> Tree-impact factor breakdown showing exact percentage contribution of each physical sensor.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 15 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 16: CHAPTER 7 - CHALLENGES & FUTURE WORK PLAN -->
+    <section class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Chapter 7</p>
+          <h2 class="slide-title">Challenges Encountered & Work Remaining</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Technical Challenges & Solutions</h3>
+            <ul class="bullet-list" style="font-size: 12.5px;">
+              <li><strong>Challenge 1: Telemetry Ingestion Bottleneck</strong>
+                <br><em>Solution:</em> Implemented Java 21 non-blocking HTTP client and FastAPI async event loop, achieving &lt;15ms per packet.</li>
+              <li><strong>Challenge 2: Browser 3D Rendering Performance</strong>
+                <br><em>Solution:</em> Procedural Three.js geometries and requestAnimationFrame throttling to maintain steady 60 FPS without external asset lag.</li>
+              <li><strong>Challenge 3: Synthesizing Audio Alarms Without External Files</strong>
+                <br><em>Solution:</em> Leveraged native browser Web Audio API oscillator nodes for frequency-modulated warning alarms.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title"><i class="fa-solid fa-calendar-check text-sky-600"></i> Plan of Work (Until Final Submission)</h3>
+            <table class="data-table" style="font-size: 12px;">
+              <thead>
+                <tr>
+                  <th>Milestone / Activity</th>
+                  <th>Timeline</th>
+                  <th>Target Outcome</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Physical IoT Rig Integration</td>
+                  <td>Weeks 1–2</td>
+                  <td>Connect ESP32 + MPU6050 vibration rig</td>
+                </tr>
+                <tr>
+                  <td>Model Validation on Benchmark Data</td>
+                  <td>Weeks 3–4</td>
+                  <td>Publish F1-Score & ROC-AUC curves</td>
+                </tr>
+                <tr>
+                  <td>Mobile App APK Build</td>
+                  <td>Weeks 5–6</td>
+                  <td>Deliver Flutter technician app</td>
+                </tr>
+                <tr>
+                  <td>Final Project Report & Testing</td>
+                  <td>Weeks 7–8</td>
+                  <td>Complete MCA documentation</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 16 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 17: CONCLUSION -->
+    <section class="slide" id="slide-17">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">Conclusion</p>
+          <h2 class="slide-title">Summary & Project Contribution</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="margin-bottom: 16px;">
+          <div class="card card-primary" style="text-align: center;">
+            <i class="fa-solid fa-industry" style="font-size: 24px; color: #0284c7; margin-bottom: 8px;"></i>
+            <h4 style="font-size: 13px; font-weight: 700; color: var(--navy);">Industry 4.0 Standard</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Compliant with ISO 13379-1 Condition Monitoring & Diagnostics framework.</p>
+          </div>
+          <div class="card card-primary" style="text-align: center;">
+            <i class="fa-solid fa-network-wired" style="font-size: 24px; color: #0284c7; margin-bottom: 8px;"></i>
+            <h4 style="font-size: 13px; font-weight: 700; color: var(--navy);">Dual Architecture</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Demonstrates enterprise synergy between Java Edge and Python ML engines.</p>
+          </div>
+          <div class="card card-primary" style="text-align: center;">
+            <i class="fa-solid fa-chart-line" style="font-size: 24px; color: #0284c7; margin-bottom: 8px;"></i>
+            <h4 style="font-size: 13px; font-weight: 700; color: var(--navy);">Actionable Value</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Estimates Remaining Useful Life and provides root-cause XAI transparency.</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="card-title"><i class="fa-solid fa-flag-checkered text-emerald-600"></i> Current Project Standing:</h3>
+          <p style="font-size: 13px;">The second presentation milestones have been completed successfully: the core FastAPI server, the Java Edge Gateway, the AI Prognostic Engine, the 3D Digital Twin, and the automated ticketing pipeline are fully implemented and running locally and over public test domains. The group is well-positioned to complete physical IoT sensor binding and final testing on schedule.</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 17 / 18</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 18: REFERENCES -->
+    <section class="slide" id="slide-18">
+      <div class="slide-header">
+        <div>
+          <p class="slide-category">References</p>
+          <h2 class="slide-title">References (IEEE Standard Format)</h2>
+        </div>
+        <p class="slide-tkiet-tag">TKIET MCA • Review-II</p>
+      </div>
+      <div class="slide-body">
+        <ul class="bullet-list" style="font-size: 12px; line-height: 1.6;">
+          <li>[1] ISO 13379-1:2012, <em>"Condition monitoring and diagnostics of machines — General guidelines on data interpretation and diagnostics techniques,"</em> International Organization for Standardization, Geneva, Switzerland.</li>
+          <li>[2] National Institute of Standards and Technology (NIST), <em>"Smart Manufacturing Operations Planning and Control Program,"</em> U.S. Dept. of Commerce, 2022.</li>
+          <li>[3] R. K. Mobley, <em>"An Introduction to Predictive Maintenance,"</em> 2nd ed., Butterworth-Heinemann, Oxford, UK, 2002.</li>
+          <li>[4] S. M. Lundberg and S.-I. Lee, <em>"A unified approach to interpreting model predictions,"</em> in <em>Advances in Neural Information Processing Systems (NeurIPS)</em>, 2017, pp. 4765–4774.</li>
+          <li>[5] J. Lee, H. A. Kao, and S. Yang, <em>"Service innovation and smart analytics for Industry 4.0 and big data environment,"</em> <em>Procedia CIRP</em>, vol. 16, pp. 3–8, 2014.</li>
+          <li>[6] FastAPI Official Documentation, <em>"FastAPI framework, high performance, easy to learn, fast to code, ready for production,"</em> 2024. [Online]. Available: https://fastapi.tiangolo.com</li>
+          <li>[7] Three.js Authors, <em>"Three.js JavaScript 3D Library,"</em> 2024. [Online]. Available: https://threejs.org</li>
+        </ul>
+        <div style="margin-top: 18px; text-align: center;">
+          <h3 style="color: var(--primary); font-size: 18px; font-weight: 800;">Thank You! Questions & Discussion</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Department of Computer Applications, TKIET, Warananagar</p>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span>FactoryMind AI — Preliminary Project Presentation</span>
+        <span>Slide 18 / 18</span>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 18;
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.remove('active');
+        if (idx + 1 === currentSlide) {
+          s.classList.add('active');
+        }
+      });
+
+      document.getElementById('slide-indicator').innerText = `Slide ${currentSlide} of ${totalSlides}`;
+    }
+
+    function nextSlide() {
+      showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      showSlide(currentSlide - 1);
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      } else if (e.key === 'Home') {
+        showSlide(1);
+      } else if (e.key === 'End') {
+        showSlide(totalSlides);
+      }
+    });
+  </script>
+</body>
+</html>
